@@ -1,0 +1,41 @@
+{
+    "default_locale": "zh_TW",
+    "manifest_version": 2,
+    "name": "__MSG_name__",
+    "version": "0.3",
+
+    "description": "__MSG_description__",
+    "icons": {
+        "16": "./images/icon16.png",
+        "48": "./images/icon48.png",
+        "128": "./images/icon128.png"
+    },
+
+    "browser_action": {
+        "default_icon": "./images/icon16.png",
+        "default_title": "__MSG_default_title__"
+    },
+    
+    "commands": {
+        "_execute_browser_action": {
+            "suggested_key": {
+              "default": "Ctrl+Shift+F",
+              "mac": "MacCtrl+Shift+F"
+            }
+        }
+    },
+    "background": {
+        "scripts": ["./js/Main.js", 
+                    "./js/Function.js"],
+        "persistent": false
+    },
+    "content_scripts": [{
+        "matches": ["https://*/*"],
+        "js": ["./js/jquery-3.3.1.min.js", 
+               "./js/CONSTANT.js", 
+               "./js/Function.js", 
+               "./js/Content_Scripts.js"]
+    }],
+    "permissions": ["activeTab", "contextMenus"],
+    "options_page": "./option/index.html"
+}

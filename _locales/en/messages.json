@@ -1,0 +1,21 @@
+{
+    "name": {
+        "message": "Video in Theater Mode"
+    },
+
+    "description": {
+        "message": "Let you feel immersed when watching the video"
+    },
+
+    "default_title": {
+        "message": "Toggle button to ON/OFF theater mode\nHot key: Ctrl+Shift+F"
+    },
+
+    "no_video": {
+        "message": "Detect no Video"
+    },
+    
+    "first_install": {
+        "message": "Please close the chrome and re-open it to let the extension work"
+    }    
+}
