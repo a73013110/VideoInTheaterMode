@@ -2,7 +2,7 @@
     "default_locale": "zh_TW",
     "manifest_version": 2,
     "name": "__MSG_name__",
-    "version": "0.3",
+    "version": "0.8",
 
     "description": "__MSG_description__",
     "icons": {
@@ -25,7 +25,7 @@
         }
     },
     "background": {
-        "scripts": ["./js/Main.js", 
+        "scripts": ["./js/Background.js", 
                     "./js/Function.js"],
         "persistent": false
     },
@@ -36,6 +36,6 @@
                "./js/Function.js", 
                "./js/Content_Scripts.js"]
     }],
-    "permissions": ["activeTab", "contextMenus"],
+    "permissions": ["activeTab"],
     "options_page": "./option/index.html"
 }

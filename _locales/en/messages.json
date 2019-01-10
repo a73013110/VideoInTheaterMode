@@ -15,6 +15,10 @@
         "message": "Detect no Video"
     },
     
+    "many_videos": {
+        "message": "Detect many videos, please click one of the videos and try again.\n1.Confirm: Confirm already click and keep turn on theater mode.\n2.Cancel: Re-click the video."
+    },
+    
     "first_install": {
         "message": "Please close the chrome and re-open it to let the extension work"
     }    

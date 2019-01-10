@@ -1,3 +1,5 @@
-VIDEO_STYLE = {"attribute": undefined};
+var VIDEO_STYLE = {"height": undefined, "width": undefined, "top": undefined, "left": undefined}
 
-THEATER_DARK_STYLES = {"attribute": undefined};
+var THEATER_RESIZE_STYLES = {"style": undefined};
+
+var THEATER_DARK_STYLES = {"style": undefined, "class": undefined};
