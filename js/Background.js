@@ -7,7 +7,7 @@
 chrome.browserAction.onClicked.addListener(function(tab){
     // 傳送訊息至目前瀏覽器的分頁(tab), sendMessage(integer tabId, any message(Json格式), object options, function responseCallback)
     chrome.tabs.sendMessage(tab.id, {mode: "theater"}, function(response) {
-        console.log("Success to send the message of turning on the theater mode!");
+        // console.log("Success to send the message of turning on the theater mode!");
    });
 });
 

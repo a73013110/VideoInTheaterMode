@@ -2,7 +2,7 @@
     "default_locale": "zh_TW",
     "manifest_version": 2,
     "name": "__MSG_name__",
-    "version": "0.8",
+    "version": "0.9",
 
     "description": "__MSG_description__",
     "icons": {
@@ -26,14 +26,15 @@
     },
     "background": {
         "scripts": ["./js/Background.js", 
-                    "./js/Function.js"],
+                    "./js/Backend_Function.js"],
         "persistent": false
     },
     "content_scripts": [{
         "matches": ["https://*/*"],
         "js": ["./js/jquery-3.3.1.min.js", 
                "./js/CONSTANT.js", 
-               "./js/Function.js", 
+               "./js/Frontend_Function.js",
+               "./js/Backend_Function.js", 
                "./js/Content_Scripts.js"]
     }],
     "permissions": ["activeTab"],

@@ -16,7 +16,7 @@
     },
     
     "many_videos": {
-        "message": "Detect many videos, please click one of the videos and try again.\n1.Confirm: Confirm already click and keep turn on theater mode.\n2.Cancel: Re-click the video."
+        "message": "Detect many videos, please click one of the videos and try again.\n1.Confirm: start to click the video.\n2.Cancel: don't turn on theater mode."
     },
     
     "first_install": {

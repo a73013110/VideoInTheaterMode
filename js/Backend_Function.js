@@ -1,10 +1,15 @@
 /**
+ * This js file is to do some backend compute
+ * For example: what object will be hide
+ */
+
+/**
  * Get parent and sibling objects of input object, total 2 stages includeing video object.
  * The first object which this function return is Video.
  * The first object which this function return is parent of Video.
  * @param {HTMLObject} object - what you want to get its parents.
  */
-function GetResizeObjects(object){
+function GetResizeObjects(object) {
     var resize_objects = [];
     resize_objects = resize_objects.concat(object); // Concat video object.
     var parent = $(object).parent().toArray();
@@ -17,7 +22,7 @@ function GetResizeObjects(object){
  * Get all parent objects of the parent of input object, excluding "HTML".
  * @param {HTMLObject} object - what you want to get its parents.
  */
-function GetDarkObjects(object){
+function GetDarkObjects(object) {
     return $(object).parent().parentsUntil("HTML").toArray();
 }
 
@@ -26,7 +31,7 @@ function GetDarkObjects(object){
  * If the array which you want to "concat" is in different size, you need to do "toArray()" first.
  * @param {HTMLObject} object - what you want to get its sibling.
  */
-function GetSiblingObjects(object){
+function GetSiblingObjects(object) {
     return $(object).siblings().not("script").toArray();
 }
 
@@ -34,9 +39,9 @@ function GetSiblingObjects(object){
  * Get all objects which are not dirrectly related with the input objects.
  * @param {HTMLObjects Array} objects - array-like what you want to get its sibling.
  */
-function GetHideObjects(objects){
+function GetHideObjects(objects) {
     var hide_objects = [];
-    for (var i=0; i<objects.length; i++){
+    for (var i=0; i<objects.length; i++) {
         var sibling_objects = GetSiblingObjects(objects[i]);
         if (sibling_objects.length > 0) { hide_objects = hide_objects.concat(sibling_objects); }    // Do not "concat" if no sibling.
     }
@@ -49,21 +54,21 @@ function GetHideObjects(objects){
  * @param {Float} window_height - height of the Viewport.
  * @param {Float} window_width - width of the Viewport.
  */
-function GetVideoSizeAndLoc(video_object, window_height, window_width){
+function GetVideoSizeAndLoc(video_object, window_height, window_width) {
     var video_height = parseFloat(video_object.style.height);   // Get video height. Bcs "style.height" will return the value which include "px", use "parseFloat" to ignore that.
     var video_width = parseFloat(video_object.style.width); // Get video width. Bcs ... which is the same as above.
     var video_size_loc = Object.assign({}, VIDEO_STYLE);    // Get defined value from CONSTANT.
-    if (isNaN(video_height) || isNaN(video_width)){
+    if (isNaN(video_height) || isNaN(video_width)) {
         video_size_loc["height"] = window_height;
         video_size_loc["width"] = window_width;
     }
-    else{
-        if (window_width/window_height > video_width/video_height){ // Aspect ratio of browser is bigger than video, which mean: browser is more "rectangle"(horizontal) than video.
+    else {
+        if (window_width/window_height > video_width/video_height) { // Aspect ratio of browser is bigger than video, which mean: browser is more "rectangle"(horizontal) than video.
             // Bcs width of the browser is enough, assign height of the video first so that the width can be calculated.
             video_size_loc["height"] = window_height;
             video_size_loc["width"] = video_width*(window_height/video_height);
         }
-        else{   // Aspect ratio of browser is smaller than video, which mean: browser is more "rectangle"(vertical) than video.
+        else {   // Aspect ratio of browser is smaller than video, which mean: browser is more "rectangle"(vertical) than video.
             // Bcs height of the browser is enough, assign width of the video first so that the height can be calculated.
             video_size_loc["height"] = video_height*(window_width/video_width);
             video_size_loc["width"] = window_width;
@@ -139,18 +144,18 @@ function StartTheaterMode(backup=true, theater_resize_objects, theater_dark_obje
  */
 function StopTheaterMode(theater_resize_objects, theater_dark_objects, theater_hide_objects, ori_theater_resize_attr, ori_theater_dark_attr, ori_theater_hide_styles){
     // Restore Video size & location.
-    for (var i=0; i<theater_resize_objects.length; i++){
+    for (var i=0; i<theater_resize_objects.length; i++) {
         if (ori_theater_resize_attr[i]["style"] === undefined) $(theater_resize_objects[i]).removeAttr("style");
         else $(theater_resize_objects[i]).attr("style", ori_theater_resize_attr[i]["style"]);
     }
     // Restore the parents' style of Video.
-    for (var i=0; i<theater_dark_objects.length; i++){
+    for (var i=0; i<theater_dark_objects.length; i++) {
         if (ori_theater_dark_attr[i]["style"] === undefined) $(theater_dark_objects[i]).removeAttr("style");
         else $(theater_dark_objects[i]).attr("style", ori_theater_dark_attr[i]["style"]);
         $(theater_dark_objects[i]).addClass(ori_theater_dark_attr[i]["class"]);
     }
     // Restore the siblings' style of Video.
-    for (var i=0; i<theater_hide_objects.length; i++){
+    for (var i=0; i<theater_hide_objects.length; i++) {
         $(theater_hide_objects[i]).css("display", ori_theater_hide_styles[i]);
     }
 }
@@ -159,6 +164,6 @@ function StopTheaterMode(theater_resize_objects, theater_dark_objects, theater_h
  * Get message from _locales
  * @param {String} key 
  */
-function getMessage(key){
+function getMessage(key) {
     return chrome.i18n.getMessage(key);
 }
