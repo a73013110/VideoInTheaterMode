@@ -8,13 +8,9 @@ Let video in browser to fit the full viewport
 - Add new mechanism (3 steps): 
 
 | Step | Detail |
-
 |--|--|
-
 | 1 | Turn on the theater mode and then browser will show message if detect many video in the webpage. |
-
 | 2 | According to message, click one video which you want to turn it in theater mode. |
-
 | 3 | Turn on the theater mode again, it may be successful. |
 
 - Fix bugs
