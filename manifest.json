@@ -2,7 +2,7 @@
     "default_locale": "zh_TW",
     "manifest_version": 2,
     "name": "__MSG_name__",
-    "version": "0.9",
+    "version": "0.9.1",
 
     "description": "__MSG_description__",
     "icons": {
@@ -26,15 +26,16 @@
     },
     "background": {
         "scripts": ["./js/Background.js", 
-                    "./js/Backend_Function.js"],
+                    "./js/common/functions.js"],
         "persistent": false
     },
     "content_scripts": [{
         "matches": ["https://*/*"],
-        "js": ["./js/jquery-3.3.1.min.js", 
-               "./js/CONSTANT.js", 
-               "./js/Frontend_Function.js",
-               "./js/Backend_Function.js", 
+        "js": ["./js/utils/jquery-3.3.1.min.js", 
+               "./js/common/functions.js",
+               "./js/common/CONSTANT.js", 
+               "./js/func/Select_Video.js",
+               "./js/func/Theater_Mode.js", 
                "./js/Content_Scripts.js"]
     }],
     "permissions": ["activeTab"],

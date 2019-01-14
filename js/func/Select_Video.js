@@ -13,6 +13,7 @@ function RestoreStyle(focus_object) {
 function ObjectFocus(focus_object) {
     if (focus_object["focused"]) RestoreStyle(focus_object);    // restore "focus_object"
     // store "focus_object"
+    console.log(document.activeElement);
     focus_object["object"] = document.activeElement;
     focus_object["style"] = $(focus_object["object"]).attr("style");
     $(focus_object["object"]).css({"border":"medium solid red"});

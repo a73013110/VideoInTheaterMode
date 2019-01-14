@@ -60,6 +60,20 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {	/
 	}
 });
 
+// $('iframe').mouseenter(function(){
+//     if (focus_object["focused"]) RestoreStyle(focus_object);    // restore "focus_object"
+//     // store "focus_object"
+//     console.log($(this)[0]);
+//     focus_object["object"] = $(this)[0];
+//     focus_object["style"] = $(focus_object["object"]).attr("style");
+//     $(focus_object["object"]).css({"border":"medium solid red"});
+//     focus_object["focused"] = true;
+// })
+// $('iframe').mouseleave(function(){
+//     if (focus_object["focused"]) RestoreStyle(focus_object);    // restore "focus_object"
+//     // store "focus_object"
+// })
+
 // Windows Resize Event, if in theater mode then stop theater mode.
 $(window).resize(function() {
 	if (theater_mode){

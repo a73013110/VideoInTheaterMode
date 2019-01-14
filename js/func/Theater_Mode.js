@@ -159,11 +159,3 @@ function StopTheaterMode(theater_resize_objects, theater_dark_objects, theater_h
         $(theater_hide_objects[i]).css("display", ori_theater_hide_styles[i]);
     }
 }
-
-/**
- * Get message from _locales
- * @param {String} key 
- */
-function getMessage(key) {
-    return chrome.i18n.getMessage(key);
-}
