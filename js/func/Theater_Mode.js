@@ -7,56 +7,52 @@
  * Get parent and sibling objects of input object, total 2 stages includeing video object.
  * The first object which this function return is Video.
  * The first object which this function return is parent of Video.
- * @param {HTMLObject} object - what you want to get its parents.
+ * @param {Jquery object} video_object - what you want to get its parents.
  */
-function GetResizeObjects(object) {
-    var resize_objects = [];
-    resize_objects = resize_objects.concat(object); // Concat video object.
-    var parent = $(object).parent().toArray();
-    resize_objects = resize_objects.concat(parent); // Concat parent of video object.
-    resize_objects = resize_objects.concat(GetSiblingObjects(parent));  // Concat sibling of parent of video object.
+function GetResizeObjects(video_object) {
+    var resize_objects = $();
+    $.merge(resize_objects, video_object); // Concat video object.
+    var parent = video_object.parent();
+    $.merge(resize_objects, parent); // Concat parent of video object.
+    $.merge(resize_objects, GetSiblingObjects(parent));  // Concat sibling of parent of video object.
     return resize_objects;
 }
 
 /**
- * Get all parent objects of the parent of input object, excluding "HTML".
- * @param {HTMLObject} object - what you want to get its parents.
+ * Get all parent objects of the grandparent of input object, excluding "HTML".
+ * @param {Jquery object} video_object - what you want to get its parents.
  */
-function GetDarkObjects(object) {
-    return $(object).parent().parentsUntil("HTML").toArray();
+function GetDarkObjects(video_object) {
+    return video_object.parent().parentsUntil("HTML");
 }
 
 /**
  * Get all sibling objects of the input object, excluding "script" tag.
  * If the array which you want to "concat" is in different size, you need to do "toArray()" first.
- * @param {HTMLObject} object - what you want to get its sibling.
+ * @param {Jquery object} object - what you want to get its sibling.
  */
 function GetSiblingObjects(object) {
-    return $(object).siblings().not("script").toArray();
+    return object.siblings().not("script");
 }
 
 /**
  * Get all objects which are not dirrectly related with the input objects.
- * @param {HTMLObjects Array} objects - array-like what you want to get its sibling.
+ * @param {Jquery object} objects - array-like what you want to get its sibling.
  */
 function GetHideObjects(objects) {
-    var hide_objects = [];
-    for (var i=0; i<objects.length; i++) {
-        var sibling_objects = GetSiblingObjects(objects[i]);
-        if (sibling_objects.length > 0) { hide_objects = hide_objects.concat(sibling_objects); }    // Do not "concat" if no sibling.
-    }
+    var hide_objects = GetSiblingObjects(objects);
     return hide_objects;
 }
 
 /**
  * According to aspect ratio of the video object, calculating the suitable size to fill the browser viewport and loaction.
- * @param {HTMLObjects} video_object - what you want to get suitable size.
+ * @param {Jquery object} video_object - what you want to get suitable size.
  * @param {Float} window_height - height of the Viewport.
  * @param {Float} window_width - width of the Viewport.
  */
 function GetVideoSizeAndLoc(video_object, window_height, window_width) {
-    var video_height = parseFloat(video_object.style.height);   // Get video height. Bcs "style.height" will return the value which include "px", use "parseFloat" to ignore that.
-    var video_width = parseFloat(video_object.style.width); // Get video width. Bcs ... which is the same as above.
+    var video_height = parseFloat(video_object[0].style.height);   // Get video height. Bcs "style.height" will return the value which include "px", use "parseFloat" to ignore that.
+    var video_width = parseFloat(video_object[0].style.width); // Get video width. Bcs ... which is the same as above.
     var video_size_loc = Object.assign({}, VIDEO_STYLE);    // Get defined value from CONSTANT.
     if (isNaN(video_height) || isNaN(video_width)) {
         video_size_loc["height"] = window_height;
@@ -80,54 +76,76 @@ function GetVideoSizeAndLoc(video_object, window_height, window_width) {
 }
 
 /**
+ * 
+ * @param {Dictionary include jquery object} video_object - 1.a Videos; 2.original style.
+ * @param {Dictionary include jquery object} theater_resize_objects - 1.the parent and its sibling of the Video; 2.original style.
+ * @param {Dictionary include jquery object} theater_dark_objects - 1.the grandparents of Video; 2.original style.
+ * @param {Dictionary include jquery object} theater_hide_objects - 1.the objects which are not dirrectly related with the Video; ; 2.original style.
+ */
+function SetTheaterObjects(video_object, theater_resize_objects, theater_dark_objects, theater_hide_objects) {
+    theater_resize_objects["objects"] = GetResizeObjects(video_object["object"]);
+    theater_dark_objects["objects"] = GetDarkObjects(video_object["object"]);
+    theater_hide_objects["objects"] = GetHideObjects(theater_dark_objects["objects"]);
+    // Put parent of video into "theater_dark_objects" and remove it from "theater_resize_objects"
+    $.merge(theater_dark_objects["objects"], theater_resize_objects["objects"].eq(1));
+    theater_resize_objects["objects"].splice(0, 2);	// splice(index, number), remove "number" object array element from "index"
+}
+
+/**
  * Start Theater Mode.
  * 1. Set Video to fill the viewport of browser.
  * 2. Let the parents of Video turn to dark and adjust some style.
  * 3. Let the objects which are not dirrectly related with the Video hide.
- * @param {HTMLObject} backup - store original HTMLObject styles if true.
- * @param {HTMLObject} theater_resize_objects - the parent and its sibling of the Video.
- * @param {HTMLObjects Array} theater_dark_objects - the parents of parent of Video.
- * @param {HTMLObjects Array} theater_hide_objects - the objects which are not dirrectly related with the Video.
- * @param {Object} ori_theater_resize_attr - original style of "theater_resize_objects".
- * @param {Object Array} ori_theater_dark_attr - original style and class of "theater_dark_objects".
- * @param {Object Array} ori_theater_hide_styles - original style of "theater_hide_objects".
+ * @param {Boolean} backup - store original HTMLObject styles if true.
+ * @param {Dictionary include jquery object} video_object - 1.a Videos; 2.original style.
+ * @param {Dictionary include jquery object} theater_resize_objects - 1.the parent and its sibling of the Video; 2.original style.
+ * @param {Dictionary include jquery object} theater_dark_objects - 1.the grandparents of Video; 2.original style.
+ * @param {Dictionary include jquery object} theater_hide_objects - 1.the objects which are not dirrectly related with the Video; ; 2.original style.
  */
-function StartTheaterMode(backup=true, theater_resize_objects, theater_dark_objects, theater_hide_objects, ori_theater_resize_attr, ori_theater_dark_attr, ori_theater_hide_styles) {
+function StartTheaterMode(backup=true, video_object, theater_resize_objects, theater_dark_objects, theater_hide_objects) {
+    // Set(Get) theater object
+    SetTheaterObjects(video_object, theater_resize_objects, theater_dark_objects, theater_hide_objects);
+    // Backup the scroll position
+    gScroll["left"] = window.pageXOffset;
+    gScroll["top"] = window.pageYOffset;
     // Calculate height/weight.
     var window_height = window.innerHeight; // Get browser viewport height.
     var window_width = window.innerWidth;   // Get browser viewport width.
-    var video_size_loc = GetVideoSizeAndLoc(theater_resize_objects[0], window_height, window_width);   // Get suitable height/width & top/left.
+    var video_size_loc = GetVideoSizeAndLoc(video_object["object"], window_height, window_width);   // Get suitable height/width & top/left.
     // Backup and adjust Video size & location.
-    for (var i=0; i<theater_resize_objects.length; i++) {
+    if (backup) {        
+        video_object["attr"] = Object.assign({}, THEATER_VIDEO_STYLES);
+        video_object["attr"]["style"] = video_object["object"].attr("style");
+    }
+    video_object["object"].css({"height": video_size_loc["height"], "width": video_size_loc["width"], "top": video_size_loc["top"], "left": video_size_loc["left"]});
+    // Backup and adjust parent and sibling of Video size & location.
+    for (var i=0; i<theater_resize_objects["objects"].length; i++) {
         if (backup) {
-            ori_theater_resize_attr[i] = Object.assign({}, THEATER_RESIZE_STYLES);
-            ori_theater_resize_attr[i]["style"] = $(theater_resize_objects[i]).attr("style");
+            theater_resize_objects["attr"][i] = Object.assign({}, THEATER_RESIZE_STYLES);
+            theater_resize_objects["attr"][i]["style"] = theater_resize_objects["objects"].eq(i).attr("style"); // eq(i): 以jquery object的形式回傳第i個元素
         }
         // Set both height and width of Video and its parent, the other only set left, text color, and background-image(Which youtube use this)
-        if (i == 0) {
-            $(theater_resize_objects[i]).css({"height": video_size_loc["height"], "width": video_size_loc["width"], "top": video_size_loc["top"], "left": video_size_loc["left"]});
-        }
-        else {
-            $(theater_resize_objects[i]).css({"color":"white"});
-        }
+        theater_resize_objects["objects"].eq(i).css({"color":"white"});
     }
-    // Backup and adjust the parents' style & class of Video.
-    for (var i=0; i<theater_dark_objects.length; i++) {
+    // Backup and adjust the grandparents' style & class of Video.
+    for (var i=0; i<theater_dark_objects["objects"].length; i++) {
         if (backup) {
-            ori_theater_dark_attr[i] = Object.assign({}, THEATER_DARK_STYLES);
-            ori_theater_dark_attr[i]["style"] = $(theater_dark_objects[i]).attr("style");
-            ori_theater_dark_attr[i]["class"] = $(theater_dark_objects[i]).attr("class");
+            theater_dark_objects["attr"][i] = Object.assign({}, THEATER_DARK_STYLES);
+            theater_dark_objects["attr"][i]["style"] = theater_dark_objects["objects"].eq(i).attr("style");
+            theater_dark_objects["attr"][i]["class"] = theater_dark_objects["objects"].eq(i).attr("class");
         }        
-        $(theater_dark_objects[i]).css({"background":"rgba(0,0,0)", "margin":"0px", "padding":"0px", "overflow":"hidden", "outline":"none", "height":window_height, "width":window_width});
-        $(theater_dark_objects[i]).removeClass();   // Bcs some class will effect the css style
+        theater_dark_objects["objects"].eq(i).css({"background":"rgba(0,0,0)", "margin":"0px", "padding":"0px", "overflow":"hidden", "outline":"none", 
+                                                   "height": isStyleExist(theater_dark_objects["objects"].eq(i), "height") ? window_height : "", 
+                                                   "width": isStyleExist(theater_dark_objects["objects"].eq(i), "width") ? window_width : ""});
+        theater_dark_objects["objects"].eq(i).removeClass();   // Bcs some class will effect the css style
     }
     // Backup and adjust the siblings' style of Video.
     if (backup) {
-        for (var i=0; i<theater_hide_objects.length; i++) {
-            ori_theater_hide_styles[i] = $(theater_hide_objects[i])[0].style.display;
-            $(theater_hide_objects[i]).css("display", "none");
+        for (var i=0; i<theater_hide_objects["objects"].length; i++) {
+            theater_hide_objects["attr"][i] = theater_hide_objects["objects"].get(i).style.display;
+            theater_hide_objects["objects"].eq(i).css("display", "none");
         }
-    }    
+    }
 }
 
 /**
@@ -135,27 +153,30 @@ function StartTheaterMode(backup=true, theater_resize_objects, theater_dark_obje
  * 1. Restore Video size in the viewport of browser.
  * 2. Restore the parents of Video turn to un-dark and restore some style.
  * 3. Restore the objects which are not dirrectly related with the Video display.
- * @param {HTMLObject} theater_resize_objects - the parent and its sibling of the Video.
- * @param {HTMLObjects Array} theater_dark_objects - the parents of parent of Video.
- * @param {HTMLObjects Array} theater_hide_objects - the objects which are not dirrectly related with the Video.
- * @param {Object} ori_theater_resize_attr - original style of "theater_resize_objects".
- * @param {Object Array} ori_theater_dark_attr - original style and class of "theater_dark_objects".
- * @param {Object Array} ori_theater_hide_styles - original style of "theater_hide_objects".
+ * @param {Dictionary include jquery object} video_object - 1.a Videos; 2.original style.
+ * @param {Dictionary include jquery object} theater_resize_objects - 1.the parent and its sibling of the Video; 2.original style.
+ * @param {Dictionary include jquery object} theater_dark_objects - the grandparents of Video; 2.original style.
+ * @param {Dictionary include jquery object} theater_hide_objects - 1.the objects which are not dirrectly related with the Video; ; 2.original style.
  */
-function StopTheaterMode(theater_resize_objects, theater_dark_objects, theater_hide_objects, ori_theater_resize_attr, ori_theater_dark_attr, ori_theater_hide_styles){
+function StopTheaterMode(video_object, theater_resize_objects, theater_dark_objects, theater_hide_objects){
     // Restore Video size & location.
-    for (var i=0; i<theater_resize_objects.length; i++) {
-        if (ori_theater_resize_attr[i]["style"] === undefined) $(theater_resize_objects[i]).removeAttr("style");
-        else $(theater_resize_objects[i]).attr("style", ori_theater_resize_attr[i]["style"]);
+    if (video_object["attr"]["style"] === undefined) video_object["object"].removeAttr("style");
+    else video_object["object"].attr("style", video_object["attr"]["style"]);
+    // Backup and adjust parent and sibling of Video size & location.
+    for (var i=0; i<theater_resize_objects["objects"].length; i++) {
+        if (theater_resize_objects["attr"][i]["style"] === undefined) theater_resize_objects["objects"].eq(i).removeAttr("style");
+        else theater_resize_objects["objects"].eq(i).attr("style", theater_resize_objects["attr"][i]["style"]);
     }
-    // Restore the parents' style of Video.
-    for (var i=0; i<theater_dark_objects.length; i++) {
-        if (ori_theater_dark_attr[i]["style"] === undefined) $(theater_dark_objects[i]).removeAttr("style");
-        else $(theater_dark_objects[i]).attr("style", ori_theater_dark_attr[i]["style"]);
-        $(theater_dark_objects[i]).addClass(ori_theater_dark_attr[i]["class"]);
+    // Restore the grandparents' style of Video.
+    for (var i=0; i<theater_dark_objects["objects"].length; i++) {
+        if (theater_dark_objects["attr"][i]["style"] === undefined) theater_dark_objects["objects"].eq(i).removeAttr("style");
+        else theater_dark_objects["objects"].eq(i).attr("style", theater_dark_objects["attr"][i]["style"]);
+        theater_dark_objects["objects"].eq(i).addClass(theater_dark_objects["attr"][i]["class"]);
     }
     // Restore the siblings' style of Video.
-    for (var i=0; i<theater_hide_objects.length; i++) {
-        $(theater_hide_objects[i]).css("display", ori_theater_hide_styles[i]);
+    for (var i=0; i<theater_hide_objects["objects"].length; i++) {
+        theater_hide_objects["objects"].eq(i).css("display", theater_hide_objects["attr"][i]);
     }
+    // Restore the scroll position
+    window.scrollTo(gScroll["left"], gScroll["top"]);
 }
