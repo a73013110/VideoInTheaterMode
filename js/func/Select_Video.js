@@ -3,7 +3,7 @@
  * For example: webvwiew hint which like as human machine interface
  */
 
-function ObjectFocus(focus_object, video_object, theater_resize_objects, theater_dark_objects, theater_hide_objects, video) {
+function ObjectFocus(focus_object, videos, video_siblings_parent_siblings, video_parents, video_grandparents_siblings, video) {
     focus_object["isFocused"] = true;
     focus_object["object"] = video;
     FOCUS_STYLE["height"] = video.css("height");
@@ -12,7 +12,7 @@ function ObjectFocus(focus_object, video_object, theater_resize_objects, theater
     focus_object["focus-panel"] = $(document.createElement("div"))
     focus_object["focus-panel"].css(FOCUS_STYLE);
     focus_object["focus-panel"].mouseleave(function(){ ObjectUnfocus(focus_object); });
-    focus_object["focus-panel"].on("click", function(){ StopToGetFocusVideo(focus_object, video_object, theater_resize_objects, theater_dark_objects, theater_hide_objects); });
+    focus_object["focus-panel"].on("click", function(){ StopToGetFocusVideo(focus_object, videos, video_siblings_parent_siblings, video_parents, video_grandparents_siblings); });
     $(video).after(focus_object["focus-panel"]);
 }
 
@@ -23,15 +23,15 @@ function ObjectUnfocus(focus_object) {
     focus_object["isFocused"] = false;
 }
 
-function StartToGetFocusVideo(focus_object, video_object, theater_resize_objects, theater_dark_objects, theater_hide_objects) {
-    $(video_object["object"][0].tagName).mouseenter(function(){ ObjectFocus(focus_object, video_object, theater_resize_objects, theater_dark_objects, theater_hide_objects, $(this)); });
+function StartToGetFocusVideo(focus_object, videos, video_siblings_parent_siblings, video_parents, video_grandparents_siblings) {
+    $(videos["object"][0].tagName).mouseenter(function(){ ObjectFocus(focus_object, videos, video_siblings_parent_siblings, video_parents, video_grandparents_siblings, $(this)); });
 }
 
-function StopToGetFocusVideo(focus_object, video_object, theater_resize_objects, theater_dark_objects, theater_hide_objects) {
+function StopToGetFocusVideo(focus_object, videos, video_siblings_parent_siblings, video_parents, video_grandparents_siblings) {
     ObjectUnfocus(focus_object);
-    $(video_object["object"]).off();
+    $(videos["object"]).off();
     focus_object["focus-panel"].off();
-    video_object["object"] = focus_object["object"];
-    StartTheaterMode(true, video_object, theater_resize_objects, theater_dark_objects, theater_hide_objects);
+    videos["object"] = focus_object["object"];
+    StartTheaterMode(true, videos, video_siblings_parent_siblings, video_parents, video_grandparents_siblings);
     gTheater_mode = true;   // set global variable
 }

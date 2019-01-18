@@ -3,10 +3,10 @@
  * Use to listen the event of this Chrome extension's Button Click
  */
 
-var video_object = {"object": [], "attr": []};	// Store all "Video".
-var theater_resize_objects = {"objects": [], "attr": []};
-var theater_dark_objects = {"objects": [], "attr": []};	// "objects": the grandparents of "Video", "attr": original style and class of "objects"
-var theater_hide_objects = {"objects": [], "attr": []};	// "objects": no related with "Video", "attr": original style and class of "objects"
+var video = {"object": [], "attr": []};	// Store all "Video".
+var video_siblings_parent_siblings = {"objects": [], "attr": []};
+var video_parents = {"objects": [], "attr": []};	// "objects": the grandparents of "Video", "attr": original style and class of "objects"
+var video_grandparents_siblings = {"objects": [], "attr": []};	// "objects": no related with "Video", "attr": original style and class of "objects"
 
 var focus_object = Object.assign({}, FOCUS_OBJECT);
 
@@ -15,24 +15,24 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {	/
 	// Capture message of the theater mode chrome extension.
 	if(request["mode"] == "theater") {
 		if (gTheater_mode) {
-			StopTheaterMode(video_object, theater_resize_objects, theater_dark_objects, theater_hide_objects);
+			StopTheaterMode(video, video_siblings_parent_siblings, video_parents, video_grandparents_siblings);
 		}
 		else {
-			video_object["object"] = $("video").filter(":visible");	// Expectation of video_object.length: 1.
-			video_object["object"] = (video_object["object"].length != 0) ? video_object["object"] : $("iframe").filter(":visible");	// number of videos: 0, try to detect "iframe" tag
-			// If video_object.length != 1
-			if (video_object["object"].length == 0) {
+			video["object"] = $("video").filter(":visible");	// Expectation of video.length: 1.
+			video["object"] = (video["object"].length != 0) ? video["object"] : $("iframe").filter(":visible");	// number of videos: 0, try to detect "iframe" tag
+			// If video.length != 1
+			if (video["object"].length == 0) {
 				alert(getMessage("no_video"));
 				return true;
 			}
-			else if (video_object["object"].length > 1) {	// number of videos: 2, 3, 4, ...
+			else if (video["object"].length > 1) {	// number of videos: 2, 3, 4, ...
 				var result = confirm(getMessage("many_videos"));
 				if (result == true) {
-					StartToGetFocusVideo(focus_object, video_object, theater_resize_objects, theater_dark_objects, theater_hide_objects);	// get the video which one click
+					StartToGetFocusVideo(focus_object, video, video_siblings_parent_siblings, video_parents, video_grandparents_siblings);	// get the video which one click
 				}
 				return true;
 			}
-			StartTheaterMode(true, video_object, theater_resize_objects, theater_dark_objects, theater_hide_objects);
+			StartTheaterMode(true, video, video_siblings_parent_siblings, video_parents, video_grandparents_siblings);
 		}
 		gTheater_mode = !gTheater_mode;
 		// sendResponse({content: "response message"});
@@ -43,7 +43,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {	/
 // Windows Resize Event, if in theater mode then stop theater mode.
 $(window).resize(function() {
 	if (gTheater_mode){
-		StopTheaterMode(video_object, theater_resize_objects, theater_dark_objects, theater_hide_objects);
+		StopTheaterMode(video, video_siblings_parent_siblings, video_parents, video_grandparents_siblings);
 		gTheater_mode = !gTheater_mode;		
 	}
 });
