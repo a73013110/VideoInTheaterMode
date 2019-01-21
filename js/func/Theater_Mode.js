@@ -131,7 +131,6 @@ function StartTheaterMode(backup=true, video, video_siblings_parent_siblings, vi
         video["attr"] = Object.assign({}, THEATER_VIDEO_STYLES);
         video["attr"]["style"] = video["object"].attr("style");
     }
-    console.log(video_size_loc);
     video["object"].css({"height": video_size_loc["height"], "width": video_size_loc["width"], "top": video_size_loc["top"], "left": video_size_loc["left"]});
     // Backup and adjust parent and sibling of Video size & location.
     for (var i=0; i<video_siblings_parent_siblings["objects"].length; i++) {
@@ -149,15 +148,18 @@ function StartTheaterMode(backup=true, video, video_siblings_parent_siblings, vi
     }
     // Backup and adjust the grandparents' style & class of Video.
     for (var i=0; i<video_parents["objects"].length; i++) {
+        var video_parent = video_parents["objects"].eq(i);
         if (backup) {
             video_parents["attr"][i] = Object.assign({}, THEATER_DARK_STYLES);
-            video_parents["attr"][i]["style"] = video_parents["objects"].eq(i).attr("style");
-            video_parents["attr"][i]["class"] = video_parents["objects"].eq(i).attr("class");
-        }        
-        video_parents["objects"].eq(i).css({"background":"rgba(0,0,0)", "margin":"0px", "padding":"0px", "overflow":"hidden", "outline":"none", 
-                                                   "height": isStyleExist(video_parents["objects"].eq(i), "height") ? window_height : "100%", 
-                                                   "width": isStyleExist(video_parents["objects"].eq(i), "width") ? window_width : "100%"});
-        video_parents["objects"].eq(i).removeClass();   // Bcs some class will effect the css style
+            video_parents["attr"][i]["style"] = video_parent.attr("style");
+            video_parents["attr"][i]["class"] = video_parent.attr("class");
+        }
+        video_parent.css({"background":"rgba(0,0,0)", "margin":"0px", "padding":"0px", "overflow":"hidden", "outline":"none", 
+                          "height": isStyleExist(video_parent, "height") ? window_height : "100%", 
+                          "width": isStyleExist(video_parent, "width") ? window_width : "100%", 
+                          "top": isStyleExist(video_parent, "top") ? "0px" : "",
+                          "left": isStyleExist(video_parent, "left") ? "0px" : ""});
+        video_parent.removeClass();   // Bcs some class will effect the css style
     }
     // Backup and adjust the siblings' style of Video.
     if (backup) {

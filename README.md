@@ -8,6 +8,7 @@ Let video in browser to fit the full viewport
 - Fixed that the theater mode will fail when parent of video contains another videos.
 - Fixed that in multiple videos webpage, when turn the theater mode on and select video, the selected hint will show in weird position.
 - Fixed that the video use "%" to set height & width style will scale fail when turn the theater mode on.
+- Fixed videos in some webpages are set the "top" & "left" value, and this would cause the video in weird position.
 
 > 1.0.3
 - Let some videos in theater mode could pause/play when click the video, for example: Youtube.
