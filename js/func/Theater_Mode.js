@@ -51,8 +51,10 @@ function GetGrandparentsSiblings(objects) {
  * @param {Float} window_width - width of the Viewport.
  */
 function GetVideoSizeAndLoc(video, window_height, window_width) {
-    var video_height = parseFloat(video[0].style.height);   // Get video height. Bcs "style.height" will return the value which include "px", use "parseFloat" to ignore that.
-    var video_width = parseFloat(video[0].style.width); // Get video width. Bcs ... which is the same as above.
+    // Get video height. Bcs "style.height" will return the value which include "px", use "parseFloat" to ignore that.
+    var video_height = video[0].style.height.includes("%") ? parseFloat(video.css("height")) : parseFloat(video[0].style.height);
+    // Get video width. Bcs ... which is the same as above.
+    var video_width = video[0].style.width.includes("%") ? parseFloat(video.css("width")) : parseFloat(video[0].style.width);
     var video_size_loc = Object.assign({}, VIDEO_STYLE);    // Get defined value from CONSTANT.
     if (isNaN(video_height) || isNaN(video_width)) {
         video_size_loc["height"] = window_height;
@@ -69,7 +71,7 @@ function GetVideoSizeAndLoc(video, window_height, window_width) {
             video_size_loc["height"] = video_height*(window_width/video_width);
             video_size_loc["width"] = window_width;
         }
-    }    
+    }
     video_size_loc["top"] = (window_height - video_size_loc["height"]) / 2;
     video_size_loc["left"] = (window_width - video_size_loc["width"]) / 2;
     return video_size_loc;
@@ -92,6 +94,13 @@ function SetTheaterObjects(video, video_siblings_parent_siblings, video_parents,
     // Put video's parent into "video_parents" and remove it with video from "video_siblings_parent_siblings"
     $.merge(video_parents["objects"], video_siblings_parent_siblings["objects"].eq(1));
     video_siblings_parent_siblings["objects"].splice(0, 2);	// splice(index, number), remove "number" object array element from "index"
+
+    // Check that whether video's siblings contain another video. 
+    // If true, move it to the video_grandparents_siblings which will none-display it and clear that.
+    if (video_siblings_parent_siblings["objects"].has(video["object"][0].tagName).length) {
+        $.merge(video_grandparents_siblings["objects"], video_siblings_parent_siblings["objects"]);
+        video_siblings_parent_siblings["objects"] = $();
+    }
 }
 
 /**
@@ -122,6 +131,7 @@ function StartTheaterMode(backup=true, video, video_siblings_parent_siblings, vi
         video["attr"] = Object.assign({}, THEATER_VIDEO_STYLES);
         video["attr"]["style"] = video["object"].attr("style");
     }
+    console.log(video_size_loc);
     video["object"].css({"height": video_size_loc["height"], "width": video_size_loc["width"], "top": video_size_loc["top"], "left": video_size_loc["left"]});
     // Backup and adjust parent and sibling of Video size & location.
     for (var i=0; i<video_siblings_parent_siblings["objects"].length; i++) {

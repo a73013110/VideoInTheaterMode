@@ -13,7 +13,8 @@ function ObjectFocus(focus_object, videos, video_siblings_parent_siblings, video
     focus_object["focus-panel"].css(FOCUS_STYLE);
     focus_object["focus-panel"].mouseleave(function(){ ObjectUnfocus(focus_object); });
     focus_object["focus-panel"].on("click", function(){ StopToGetFocusVideo(focus_object, videos, video_siblings_parent_siblings, video_parents, video_grandparents_siblings); });
-    $(video).after(focus_object["focus-panel"]);
+    video.css({"position":"absolute"});
+    video.after(focus_object["focus-panel"]);
 }
 
 function ObjectUnfocus(focus_object) {
