@@ -6,6 +6,7 @@
 function ObjectFocus(focus_object, videos, video_siblings_parent_siblings, video_parents, video_grandparents_siblings, video) {
     focus_object["isFocused"] = true;
     focus_object["object"] = video;
+    focus_object["ori_style"] = video.attr("style");
     FOCUS_STYLE["height"] = video.css("height");
     FOCUS_STYLE["width"] = video.css("width");
     FOCUS_STYLE["z-index"] = isStyleExist(video, "z-index") ? parseInt(video.css("z-index"))+1 : "auto";
@@ -20,8 +21,9 @@ function ObjectFocus(focus_object, videos, video_siblings_parent_siblings, video
 function ObjectUnfocus(focus_object) {
     if (focus_object["isFocused"]) {
         focus_object["focus-panel"].remove();
+        restoreStyle(focus_object["object"], focus_object["ori_style"]);
+        focus_object["isFocused"] = false;
     }
-    focus_object["isFocused"] = false;
 }
 
 function StartToGetFocusVideo(focus_object, videos, video_siblings_parent_siblings, video_parents, video_grandparents_siblings) {
@@ -34,5 +36,4 @@ function StopToGetFocusVideo(focus_object, videos, video_siblings_parent_sibling
     focus_object["focus-panel"].off();
     videos["object"] = focus_object["object"];
     StartTheaterMode(true, videos, video_siblings_parent_siblings, video_parents, video_grandparents_siblings);
-    gTheater_mode = true;   // set global variable
 }

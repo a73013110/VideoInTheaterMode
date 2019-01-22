@@ -4,6 +4,16 @@ Let video in browser to fit the full viewport
 
 # Change log
 
+> 1.1.0
+- Added fool-proofing mechanism: you can't turn on theater mode in full screen.
+- Added new feature: when you turn on theater mode and then click the fullscreen button, the video ratio will be 21:9(support few webpage).
+
+| Step | Detail |
+|--|--|
+| 1 | Turn on the theater mode. |
+| 2 | Click the fullscreen button if exist. |
+| 3 | It will change video to 21:9 in fullscreen(Just support few webpage, EX: Youtube). |
+
 > 1.0.4
 - Fixed that the theater mode will fail when parent of video contains another videos.
 - Fixed that in multiple videos webpage, when turn the theater mode on and select video, the selected hint will show in weird position.

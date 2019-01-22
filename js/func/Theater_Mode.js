@@ -97,7 +97,7 @@ function SetTheaterObjects(video, video_siblings_parent_siblings, video_parents,
 
     // Check that whether video's siblings contain another video. 
     // If true, move it to the video_grandparents_siblings which will none-display it and clear that.
-    if (video_siblings_parent_siblings["objects"].has(video["object"][0].tagName).length) {
+    if (video["object"][0].tagName == "IFRAME" || video_siblings_parent_siblings["objects"].has(video["object"][0].tagName).length) {
         $.merge(video_grandparents_siblings["objects"], video_siblings_parent_siblings["objects"]);
         video_siblings_parent_siblings["objects"] = $();
     }
@@ -123,7 +123,7 @@ function StartTheaterMode(backup=true, video, video_siblings_parent_siblings, vi
     // Calculate height/weight.
     var window_height = window.innerHeight; // Get browser viewport height.
     var window_width = window.innerWidth;   // Get browser viewport width.
-    var video_size_loc = GetVideoSizeAndLoc(video["object"], window_height, window_width);   // Get suitable height/width & top/left.
+    video["video_size_loc"] = GetVideoSizeAndLoc(video["object"], window_height, window_width);   // Get suitable height/width & top/left.
     var video_ori_height = video["object"].css("height");
     var video_ori_width = video["object"].css("width");
     // Backup and adjust Video size & location.
@@ -131,7 +131,7 @@ function StartTheaterMode(backup=true, video, video_siblings_parent_siblings, vi
         video["attr"] = Object.assign({}, THEATER_VIDEO_STYLES);
         video["attr"]["style"] = video["object"].attr("style");
     }
-    video["object"].css({"height": video_size_loc["height"], "width": video_size_loc["width"], "top": video_size_loc["top"], "left": video_size_loc["left"]});
+    video["object"].css({"height": video["video_size_loc"]["height"], "width": video["video_size_loc"]["width"], "top": video["video_size_loc"]["top"], "left": video["video_size_loc"]["left"]});
     // Backup and adjust parent and sibling of Video size & location.
     for (var i=0; i<video_siblings_parent_siblings["objects"].length; i++) {
         if (backup) {
@@ -168,6 +168,9 @@ function StartTheaterMode(backup=true, video, video_siblings_parent_siblings, vi
             video_grandparents_siblings["objects"].eq(i).css("display", "none");
         }
     }
+
+    gTheater_mode = true;
+    gObserver.observe(video["object"][0])
 }
 
 /**
@@ -182,17 +185,14 @@ function StartTheaterMode(backup=true, video, video_siblings_parent_siblings, vi
  */
 function StopTheaterMode(video, video_siblings_parent_siblings, video_parents, video_grandparents_siblings){
     // Restore Video size & location.
-    if (video["attr"]["style"] === undefined) video["object"].removeAttr("style");
-    else video["object"].attr("style", video["attr"]["style"]);
+    restoreStyle(video["object"], video["attr"]["style"]);
     // Backup and adjust parent and sibling of Video size & location.
     for (var i=0; i<video_siblings_parent_siblings["objects"].length; i++) {
-        if (video_siblings_parent_siblings["attr"][i]["style"] === undefined) video_siblings_parent_siblings["objects"].eq(i).removeAttr("style");
-        else video_siblings_parent_siblings["objects"].eq(i).attr("style", video_siblings_parent_siblings["attr"][i]["style"]);
+        restoreStyle(video_siblings_parent_siblings["objects"].eq(i), video_siblings_parent_siblings["attr"][i]["style"]);
     }
     // Restore the grandparents' style of Video.
     for (var i=0; i<video_parents["objects"].length; i++) {
-        if (video_parents["attr"][i]["style"] === undefined) video_parents["objects"].eq(i).removeAttr("style");
-        else video_parents["objects"].eq(i).attr("style", video_parents["attr"][i]["style"]);
+        restoreStyle(video_parents["objects"].eq(i), video_parents["attr"][i]["style"]);
         video_parents["objects"].eq(i).addClass(video_parents["attr"][i]["class"]);
     }
     // Restore the siblings' style of Video.
@@ -201,4 +201,7 @@ function StopTheaterMode(video, video_siblings_parent_siblings, video_parents, v
     }
     // Restore the scroll position
     window.scrollTo(gScroll["left"], gScroll["top"]);
+
+    gTheater_mode = false;
+    gObserver.disconnect();
 }
