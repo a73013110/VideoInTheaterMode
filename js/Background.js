@@ -19,6 +19,7 @@ chrome.runtime.onInstalled.addListener(function(details){
         alert(getMessage("first_install"));
     }
     else if(details.reason == "update"){
+        chrome.tabs.create({url: "../option/log.html"});
         // var thisVersion = chrome.runtime.getManifest().version;
         // alert("Updated from " + details.previousVersion + " to " + thisVersion + "!");
         // chrome.tabs.create({url: "../option/index.html"});

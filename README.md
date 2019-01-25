@@ -4,6 +4,10 @@ Let video in browser to fit the full viewport
 
 # Change log
 
+> 1.2.0
+- Added the introduction website: right-click the "chrome extension button" -> click the "Option".
+- Added first installed tutorial and update website.
+
 > 1.1.0
 - Added fool-proofing mechanism: you can't turn on theater mode in full screen.
 - Added new feature: when you turn on theater mode and then click the fullscreen button, the video ratio will be 21:9(support few webpage).
