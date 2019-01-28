@@ -171,6 +171,8 @@ function StartTheaterMode(backup=true, video, video_siblings_parent_siblings, vi
 
     gTheater_mode = true;
     gObserver.observe(video["object"][0])
+    // Set icon on.
+    chrome.runtime.sendMessage({theater_mode: true});
 }
 
 /**
@@ -204,4 +206,6 @@ function StopTheaterMode(video, video_siblings_parent_siblings, video_parents, v
 
     gTheater_mode = false;
     gObserver.disconnect();
+    // Set icon off.
+    chrome.runtime.sendMessage({theater_mode: false});
 }
